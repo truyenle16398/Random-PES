@@ -1,3 +1,5 @@
 rootProject.name = 'RandomPES'
+include ':react-native-svg'
+project(':react-native-svg').projectDir = new File(rootProject.projectDir, 'C:/Users/TRUYEN LE/AppData/Roaming/npm/node_modules/react-native-svg/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Image, TextInput, Animated } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, Image, TextInput, Animated, ToastAndroid } from 'react-native';
 import { color } from "../../../utils";
 import { Screen } from "../../../constants";
 import { listTeamStyles as styles } from "../styles";
-import { IconBack, IconDelete, IconSearch, IconTrash } from "../../../assets/svg/ic_svg";
-import { scale, verticalScale, moderateScale } from '../../../utils/ScalingUtils';
+import { IconBack, IconDelete, IconSearch, IconTrash, BgEmpty } from "../../../assets/svg/ic_svg";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import { scale } from '../../../utils/ScalingUtils';
 
 const RightActions = ({ progress, dragX, bgColor, handleOnPress }) => {
   const scale = dragX.interpolate({
@@ -15,7 +15,7 @@ const RightActions = ({ progress, dragX, bgColor, handleOnPress }) => {
   })
   return (
     <TouchableOpacity
-      style={{ flex: .25, backgroundColor: bgColor }}
+      style={styles.bgBtnDel(bgColor)}
       onPress={() => handleOnPress()}
       activeOpacity={0.7}
     >
@@ -42,6 +42,11 @@ const ListTeam = ({ navigation, route }) => {
       i?.name?.toLowerCase()?.includes(txtSearch?.toLowerCase())
     ));
   }, [txtSearch])
+
+  const addNew = (newTeam) => {
+    setDataConst([...dataConst, newTeam])
+    setListTeam([...listTeam, newTeam])
+  }
 
   let row = []
   let prevOpenedRow = null
@@ -78,7 +83,7 @@ const ListTeam = ({ navigation, route }) => {
           style={[styles.myTouchable, { backgroundColor: index % 2 === 0 ? color.grey : color.white }]}
         >
           <Image
-            source={{uri: item?.logo}}
+            source={{ uri: item?.logo }}
             style={styles.img}
             resizeMode='contain'
           />
@@ -90,18 +95,29 @@ const ListTeam = ({ navigation, route }) => {
 
   const emptyComponent = () => {
     return (
-      <View style={{ flex: 1, backgroundColor: 'pink' }}>
-
+      <View style={styles.emptyComponent}>
+        <View style={styles.marHor22}>
+          <View style={[styles.myRow, styles.jutifyBet]}>
+            <BgEmpty />
+            <Image source={require('../../../assets/img/ball.png')} style={styles.imgBall} />
+            <BgEmpty />
+          </View>
+          {txtSearch !== '' && <Text style={styles.txtEmpty}>Không có kết quả cho "{txtSearch}"</Text>}
+        </View>
       </View>
     )
   }
 
-  const addNew = () => {
-    navigation.navigate(Screen.ADD_NEW_SCREEN)
+  const onAddNew = () => {
+    navigation.navigate(Screen.ADD_NEW_SCREEN, { addNew })
   }
 
-  const goToRandom = async () => {
-    navigation.navigate(Screen.TEMP_SCREEN, { data: dataConst })
+  const goToRandom = () => {
+    if (dataConst && dataConst?.length > 1) {
+      navigation.navigate(Screen.WHEEL_SCREEN, { data: dataConst })
+    } else {
+      ToastAndroid.show('Chọn ít nhất 2 đội bóng', ToastAndroid.LONG)
+    }
   }
 
   return (
@@ -130,16 +146,17 @@ const ListTeam = ({ navigation, route }) => {
           </View>
         </View>
       </View>
-      <View style={{ flex: 1 }}>
+      <View style={styles.flex1}>
         <FlatList
           data={listTeam}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           keyExtractor={(contact, index) => String(index)}
           ListEmptyComponent={emptyComponent}
+          contentContainerStyle={styles.containerStyles}
         />
         <View style={[styles.myRow, styles.viewBottom]}>
-          <TouchableOpacity style={[styles.btnBottom, { borderWidth: 1 }]} onPress={addNew}>
+          <TouchableOpacity style={[styles.btnBottom, { borderWidth: 1 }]} onPress={onAddNew}>
             <Text style={[styles.txtBtn, { color: color.violet }]}>+ Thêm đội khác</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.btnBottom, { backgroundColor: color.violet }]} onPress={goToRandom}>

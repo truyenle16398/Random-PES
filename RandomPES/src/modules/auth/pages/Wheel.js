@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text as RNText,
   Dimensions,
@@ -14,8 +13,11 @@ import color from 'randomcolor';
 import { color as appColor } from "../../../utils";
 import { snap } from '@popmotion/popcorn';
 import { Path, G, Svg, Image } from "react-native-svg";
-import { moderateScale, scale, verticalScale } from "../../../utils/ScalingUtils";
-const { width, height } = Dimensions.get('screen');
+import { scale } from "../../../utils/ScalingUtils";
+import { wheelStyles as styles } from "../styles";
+import { IconBack, IconSound, IconNoSound } from "../../../assets/svg/ic_svg";
+import { navigationRef } from "../../../constants/nav.constants";
+const { width } = Dimensions.get('screen');
 
 const makeWheel = (arr) => {//generator data wheel
   const arcs = d3Shape.pie().value(1)(arr)
@@ -40,7 +42,7 @@ const makeWheel = (arr) => {//generator data wheel
   });
 };
 
-class Temp extends React.Component {
+class Wheel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -51,7 +53,8 @@ class Temp extends React.Component {
       numItem: 1,
       angleItem: 1,
       angleOffset: 1,
-      _wheelPaths: []
+      _wheelPaths: [],
+      isSound: true
     }
   }
   _angle = new Animated.Value(0);
@@ -93,9 +96,9 @@ class Temp extends React.Component {
   };
 
   _onPan = () => {
-    let a = -(Math.random() * this.state.numItem / 2)
+    let a = Math.floor(Math.random() * 10) + 1
     Animated.decay(this._angle, {
-      velocity: a,
+      velocity: -a,
       deceleration: 0.999,
       useNativeDriver: true
     }).start(() => {
@@ -127,40 +130,42 @@ class Temp extends React.Component {
     );
 
     return (
-      <Animated.View
-        style={{
-          width: knobSize,
-          height: knobSize * 2,
-          justifyContent: 'flex-end',
-          zIndex: 1,
-          transform: [
-            {
-              rotate: YOLO.interpolate({
-                inputRange: [-1, -0.5, -0.0001, 0.0001, 0.5, 1],
-                outputRange: ['0deg', '0deg', '-35deg', '35deg', '0deg', '0deg']
-              })
-            }
-          ]
-        }}
-      >
-        <Svg
-          width={knobSize}
-          height={(knobSize * 100) / 57}
-          viewBox={`0 0 57 100`}
-          style={{ transform: [{ translateY: 8 }] }}
+      <View style={{ alignItems: 'center' }} >
+        <Animated.View
+          style={{
+            width: knobSize,
+            height: knobSize * 2,
+            justifyContent: 'flex-end',
+            zIndex: 1,
+            transform: [
+              {
+                rotate: YOLO.interpolate({
+                  inputRange: [-1, -0.5, -0.0001, 0.0001, 0.5, 1],
+                  outputRange: ['0deg', '0deg', '-35deg', '35deg', '0deg', '0deg']
+                })
+              }
+            ]
+          }}
         >
-          <Path
-            d="M28.034,0C12.552,0,0,12.552,0,28.034S28.034,100,28.034,100s28.034-56.483,28.034-71.966S43.517,0,28.034,0z   M28.034,40.477c-6.871,0-12.442-5.572-12.442-12.442c0-6.872,5.571-12.442,12.442-12.442c6.872,0,12.442,5.57,12.442,12.442  C40.477,34.905,34.906,40.477,28.034,40.477z"
-            fill={appColor.violet}
-          />
-        </Svg>
-      </Animated.View>
+          <Svg
+            width={knobSize}
+            height={(knobSize * 100) / 57}
+            viewBox={`0 0 57 100`}
+            style={{ transform: [{ translateY: 8 }] }}
+          >
+            <Path
+              d="M28.034,0C12.552,0,0,12.552,0,28.034S28.034,100,28.034,100s28.034-56.483,28.034-71.966S43.517,0,28.034,0z   M28.034,40.477c-6.871,0-12.442-5.572-12.442-12.442c0-6.872,5.571-12.442,12.442-12.442c6.872,0,12.442,5.57,12.442,12.442  C40.477,34.905,34.906,40.477,28.034,40.477z"
+              fill={appColor.violet}
+            />
+          </Svg>
+        </Animated.View>
+      </View>
     );
   };
 
   onRemove = () => {
     const { winner, data } = this.state
-    if (data?.length > 1) {
+    if (data?.length > 2) {
       this.setData(data.filter(item => item.id !== winner.id))
     }
     this.setState({ finished: false })
@@ -245,86 +250,32 @@ class Temp extends React.Component {
   };
 
   render() {
-    const { enabled, finished } = this.state
+    const { enabled, finished, isSound } = this.state
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={{ width: width * 0.95, height: width * 0.95 }} onPress={this._onPan} disabled={!enabled}>
-          {this._renderSvgWheel()}
-        </TouchableOpacity>
+        <View style={[styles.header, styles.myRow]}>
+          <View style={styles.myRow}>
+            <TouchableOpacity onPress={() => {
+              navigationRef.current.goBack()
+            }}>
+              <IconBack />
+            </TouchableOpacity>
+            <RNText style={styles.txtHeader}>Thêm mới</RNText>
+          </View>
+        </View>
+        <View style={styles.content}>
+          <TouchableOpacity style={styles.btnSound} onPress={() => this.setState({ isSound: !isSound })}>
+            {isSound ? <IconSound /> : <IconNoSound />}
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnWheel} onPress={this._onPan} disabled={!enabled}>
+            {this._renderSvgWheel()}
+          </TouchableOpacity>
+        </View>
         {finished && enabled && this._renderWinner()}
       </View>
     );
   }
-
-
 }
 
-export default Temp;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative'
-  },
-  winnerText: {
-    fontSize: 32,
-    fontFamily: 'Menlo',
-    position: 'absolute',
-    bottom: 10
-  },
-  modalView: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    height: height,
-    width: width,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalContent: {
-    backgroundColor: appColor.white,
-    width: width * 0.8,
-    borderRadius: scale(8),
-    paddingVertical: verticalScale(22),
-    alignItems: 'center'
-  },
-  txtTitle: {
-    fontSize: moderateScale(16),
-    color: appColor.dark_grey,
-    fontWeight: '700'
-  },
-  txtTeam: {
-    fontSize: moderateScale(20),
-    color: appColor.violet,
-    fontWeight: '700'
-  },
-  imgWin: {
-    height: scale(170),
-    width: scale(170),
-    marginTop: verticalScale(32),
-    marginBottom: verticalScale(12)
-  },
-  bottomView: {
-    paddingHorizontal: scale(22),
-    paddingTop: verticalScale(12),
-    width: '100%',
-    alignItems: 'flex-end'
-  },
-  btnBottom: {
-    borderRadius: verticalScale(20),
-    height: verticalScale(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: appColor.red,
-    borderWidth: 1,
-    width: scale(120)
-  },
-  txtBtn: {
-    fontWeight: '600',
-    color: appColor.red,
-    fontSize: moderateScale(18),
-    marginLeft: scale(10)
-  }
-
-});
+export default Wheel;
 

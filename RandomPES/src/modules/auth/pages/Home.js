@@ -14,6 +14,7 @@ import { Screen } from "../../../constants";
 import { IconHeader, IconSelectBox, IconTick } from "../../../assets/svg/ic_svg";
 import { homeStyles as styles } from "../styles";
 import { useSelector } from 'react-redux';
+import SplashScreen from 'react-native-splash-screen'
 
 const SelectBox = ({ isCheck }) => {
   return (
@@ -39,6 +40,11 @@ const Home = ({ navigation }) => {
   const [data, setData] = useState(list_data)
   const [allClub, setAllClub] = useState(false)
   const [allNational, setAllNational] = useState(false)
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, [])
+
 
   useEffect(() => {
     list_data && setData(list_data)

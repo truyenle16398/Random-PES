@@ -39,12 +39,16 @@ const AddNew = ({ navigation, route }) => {
   }
 
   const onAddNew = () => {
-    // let data = {
-    //   type: list_data[group].id,
-    //   name: name,
-    //   logo: dataImg?.path,
-    //   id: `${list_data[group].id}_team_${list_data[group].list_team.length + 1}`
-    // }
+    const { params } = route || {}
+    let data = {
+      type: list_data[group].id,
+      name: name,
+      logo: dataImg?.path || Image.resolveAssetSource(require('../../../assets/img/imgDefault.png')).uri,
+      id: `${list_data[group].id}_team_${list_data[group].list_team.length + Math.random()*3}`
+    }
+
+    params?.addNew(data)
+    navigation.goBack()
 
     // dispatch(actionAddNew(data))
   }
@@ -59,8 +63,8 @@ const AddNew = ({ navigation, route }) => {
           </TouchableOpacity>
           <Text style={styles.txtHeader}>Thêm mới</Text>
         </View>
-        <TouchableOpacity onPress={onAddNew}>
-          <Text style={[styles.txtHeader, { color: color.violet }]}>Thêm mới</Text>
+        <TouchableOpacity onPress={onAddNew} disabled={name === ''}>
+          <Text style={[styles.txtHeader, { color: name === '' ? color.dark_grey : color.violet }]}>Thêm mới</Text>
         </TouchableOpacity>
       </View>
 
@@ -81,7 +85,7 @@ const AddNew = ({ navigation, route }) => {
             setVisible(!visible)
           }}>
             <Image
-              source={list_data[group].img}
+              source={{ uri: list_data[group].img }}
               style={styles.iconLeft}
             />
             <Text style={styles.txtGroup}>{list_data[group].name.toUpperCase()}</Text>
@@ -104,7 +108,7 @@ const AddNew = ({ navigation, route }) => {
                           styles.btnItem(group === index ? color.light_violet : color.grey)
                         ]}>
                         <Image
-                          source={list_data[index].img}
+                          source={{ uri: list_data[index].img }}
                           style={styles.iconLeft}
                         />
                         <Text style={styles.txtGroup}>{list_data[index].name.toUpperCase()}</Text>

@@ -1,6 +1,6 @@
 export const Screen = {
   HOME_SCREEN: 'HomeScreen',
-  TEMP_SCREEN: 'TempScreen',
+  WHEEL_SCREEN: 'WheelScreen',
   LIST_TEAM_SCREEN: 'ListTeamScreen',
   ADD_NEW_SCREEN: 'AddNewScreen'
 }

@@ -8,14 +8,15 @@ import { Screen } from '../constants';
 const Stack = createStackNavigator();
 import {
   Home,
-  Temp,
+  Wheel,
   ListTeam,
   AddNew
 } from "../modules";
+import { navigationRef } from '../constants/nav.constants';
 
 function Root() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         headerMode="none"
         screenOptions={{
@@ -24,7 +25,7 @@ function Root() {
         }}
         initialRouteName={Screen.HOME_SCREEN}>
         <Stack.Screen name={Screen.HOME_SCREEN} component={Home} />
-        <Stack.Screen name={Screen.TEMP_SCREEN} component={Temp} />
+        <Stack.Screen name={Screen.WHEEL_SCREEN} component={Wheel} />
         <Stack.Screen name={Screen.LIST_TEAM_SCREEN} component={ListTeam} />
         <Stack.Screen name={Screen.ADD_NEW_SCREEN} component={AddNew} />
       </Stack.Navigator>

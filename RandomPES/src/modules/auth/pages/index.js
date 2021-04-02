@@ -1,11 +1,11 @@
 import Home from "./Home";
-import Temp from "./temp";
+import Wheel from "./Wheel";
 import ListTeam from "./ListTeam";
 import AddNew from "./AddNew";
 
 export {
   Home,
-  Temp,
+  Wheel,
   ListTeam,
   AddNew
 };

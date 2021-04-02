@@ -78,8 +78,37 @@ const listTeamStyles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 4,
     margin: scale(8),
+  },
+  txtEmpty: {
+    marginVertical: verticalScale(12),
+    fontWeight: '700',
+    color: color.dark_grey,
+    textAlign: 'center'
+  },
+  bgBtnDel:(bgColor) => ({
+    flex: .25,
+    backgroundColor: bgColor
+  }),
+  emptyComponent: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  marHor22: {
+    paddingHorizontal: scale(22)
+  },
+  jutifyBet: {
+    justifyContent: 'space-between'
+  },
+  imgBall: {
+    height: scale(137),
+    width: scale(137)
+  },
+  flex1: {
+    flex: 1
+  },
+  containerStyles: {
+    flexGrow: 1
   }
-
 })
 
 export default listTeamStyles;

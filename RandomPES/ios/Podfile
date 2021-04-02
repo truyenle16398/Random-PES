@@ -16,6 +16,8 @@ target 'RandomPES' do
 
   pod 'RNSound', :path => '../node_modules/react-native-sound'
 
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'RandomPESTests' do
     inherit! :complete
     # Pods for testing

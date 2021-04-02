@@ -5,30 +5,23 @@ import {
   Text as RNText,
   Dimensions,
   Animated,
-  TouchableOpacity
+  TouchableOpacity,
+  Pressable,
+  Image as RNImg
 } from 'react-native';
 import * as d3Shape from 'd3-shape';
-import { PanGestureHandler, State } from "react-native-gesture-handler";
 import color from 'randomcolor';
+import { color as appColor } from "../../../utils";
 import { snap } from '@popmotion/popcorn';
-import { Path, G, TSpan, Text, Svg, Image } from "react-native-svg";
-const { width } = Dimensions.get('screen');
-import Sound from "react-native-sound";
+import { Path, G, Svg, Image } from "react-native-svg";
+import { moderateScale, scale, verticalScale } from "../../../utils/ScalingUtils";
+const { width, height } = Dimensions.get('screen');
 
-const numberOfSegments = 30//number item
-const wheelSize = width * 0.95;//size of circle
-const oneTurn = 360;//369 độ
-const angleBySegment = oneTurn / numberOfSegments;// độ của 1 item
-const fontSize = 2.5 * angleBySegment;
-const angleOffset = angleBySegment / 2;
-const knobFill = color({ hue: 'purple' });//màu
-
-const makeWheel = () => {//generator data wheel
-  const data = Array.from({ length: numberOfSegments }).fill(1);
-  const arcs = d3Shape.pie()(data);
+const makeWheel = (arr) => {//generator data wheel
+  const arcs = d3Shape.pie().value(1)(arr)
   const colors = color({
     luminosity: 'dark',
-    count: numberOfSegments
+    count: arr?.length
   });
 
   return arcs.map((arc, index) => {
@@ -41,7 +34,7 @@ const makeWheel = () => {//generator data wheel
     return {
       path: instance(arc),
       color: colors[index],
-      value: 'https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/image%2012.png?alt=media&token=71740680-12ca-4ff7-b79f-76e3ba0d1a8c', //[200, 2200]
+      value: arc.data, //[200, 2200]
       centroid: instance.centroid(arc)
     };
   });
@@ -53,19 +46,26 @@ class Temp extends React.Component {
     this.state = {
       enabled: true,
       finished: false,
-      winner: null
+      winner: null,
+      data: [],
+      numItem: 1,
+      angleItem: 1,
+      angleOffset: 1,
+      _wheelPaths: []
     }
   }
-  _wheelPaths = makeWheel();
   _angle = new Animated.Value(0);
   angle = 0;
-  // temp = new Sound('', '', (err) => {
-  //   if (err) {
-  //   }
+  oneTurn = 360;
 
-  // })
 
   componentDidMount() {
+    const { route } = this.props || {}
+    const { params } = route || {}
+    const { data } = params || []
+    if (data && data?.length > 0) {
+      this.setData(data)
+    }
     this._angle.addListener(event => {
       if (this.state.enabled) {
         this.setState({
@@ -77,23 +77,30 @@ class Temp extends React.Component {
     });
   }
 
+  setData = (params) => {
+    this.setState({
+      data: params,
+      numItem: params?.length,
+      angleItem: this.oneTurn / params?.length,
+      angleOffset: (this.oneTurn / params?.length) / 2,
+      _wheelPaths: makeWheel(params)
+    })
+  }
+
   _getWinnerIndex = () => {
-    const deg = Math.abs(Math.round(this.angle % oneTurn));
-    return Math.floor(deg / angleBySegment);
+    const deg = Math.abs(this.angle % this.oneTurn);
+    return Math.round(deg / this.state.angleItem);
   };
 
   _onPan = () => {
-    // if (nativeEvent.state === State.END) {
-    // const { velocityY } = nativeEvent;
-    console.log(fontSize);
-
+    let a = -(Math.random() * this.state.numItem / 2)
     Animated.decay(this._angle, {
-      velocity: -Math.random() * 3,
+      velocity: a,
       deceleration: 0.999,
       useNativeDriver: true
     }).start(() => {
-      this._angle.setValue(this.angle % oneTurn);
-      const snapTo = snap(oneTurn / numberOfSegments);
+      this._angle.setValue(this.angle % this.oneTurn);
+      const snapTo = snap(this.oneTurn / this.state.numItem);
       Animated.timing(this._angle, {
         toValue: snapTo(this.angle),
         duration: 300,
@@ -103,20 +110,18 @@ class Temp extends React.Component {
         this.setState({
           enabled: true,
           finished: true,
-          winner: this._wheelPaths[winnerIndex].value
+          winner: this.state._wheelPaths[winnerIndex].value
         });
       });
-      // do something here;
     });
-    // }
   };
 
   _renderKnob = () => {
     const knobSize = 30;
     const YOLO = Animated.modulo(
       Animated.divide(
-        Animated.modulo(Animated.subtract(this._angle, angleOffset), oneTurn),
-        new Animated.Value(angleBySegment)
+        Animated.modulo(Animated.subtract(this._angle, this.state.angleOffset), this.oneTurn),
+        new Animated.Value(this.state.angleItem)
       ),
       1
     );
@@ -146,16 +151,41 @@ class Temp extends React.Component {
         >
           <Path
             d="M28.034,0C12.552,0,0,12.552,0,28.034S28.034,100,28.034,100s28.034-56.483,28.034-71.966S43.517,0,28.034,0z   M28.034,40.477c-6.871,0-12.442-5.572-12.442-12.442c0-6.872,5.571-12.442,12.442-12.442c6.872,0,12.442,5.57,12.442,12.442  C40.477,34.905,34.906,40.477,28.034,40.477z"
-            fill={knobFill}
+            fill={appColor.violet}
           />
         </Svg>
       </Animated.View>
     );
   };
 
+  onRemove = () => {
+    const { winner, data } = this.state
+    if (data?.length > 1) {
+      this.setData(data.filter(item => item.id !== winner.id))
+    }
+    this.setState({ finished: false })
+  }
+
   _renderWinner = () => {
+    const { winner } = this.state
     return (
-      <RNText style={styles.winnerText}>Winner is: {this.state.winner}</RNText>
+      <View style={{ position: 'absolute' }}>
+        <Pressable
+          style={styles.modalView}
+          onPress={() => this.setState({ finished: false })}
+        >
+          <View style={styles.modalContent}>
+            <RNText style={styles.txtTitle}>Đội được chọn: </RNText>
+            <RNImg source={{ uri: winner?.logo }} style={styles.imgWin} resizeMode='contain' />
+            <RNText style={styles.txtTeam}>{winner?.name?.toUpperCase()}</RNText>
+            <View style={styles.bottomView}>
+              <TouchableOpacity style={styles.btnBottom} onPress={this.onRemove}>
+                <RNText style={styles.txtBtn}>Xóa tên</RNText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </View>
     );
   };
 
@@ -170,57 +200,39 @@ class Temp extends React.Component {
             transform: [
               {
                 rotate: this._angle.interpolate({
-                  inputRange: [-oneTurn, 0, oneTurn],
-                  outputRange: [`-${oneTurn}deg`, `0deg`, `${oneTurn}deg`]
+                  inputRange: [-this.oneTurn, 0, this.oneTurn],
+                  outputRange: [`-${this.oneTurn}deg`, `0deg`, `${this.oneTurn}deg`]
                 })
               }
             ]
           }}
         >
           <Svg
-            width={wheelSize}
-            height={wheelSize}
+            width={width * 0.95}
+            height={width * 0.95}
             viewBox={`0 0 ${width} ${width}`}
-            style={{ transform: [{ rotate: `-${angleOffset}deg` }] }}
+            style={{ transform: [{ rotate: `-${this.state.angleOffset}deg` }] }}
           >
             <G y={width / 2} x={width / 2}>
-              {this._wheelPaths.map((arc, i) => {
+              {this.state._wheelPaths.map((arc, i) => {
                 const [x, y] = arc.centroid;
-                const number = i === 0 ? 'https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/image%2014.png?alt=media' : arc.value.toString();
-
+                const href = arc.value.logo;
+                const hw = this.state.angleItem * (scale(10) / scale(6)) > 199 ? scale(150) : this.state.angleItem * (scale(10) / scale(6))
+                let xy = hw / 2 < 75 ? scale(75) : hw / 2
                 return (
                   <G key={`arc-${i}`}>
                     <Path d={arc.path} fill={arc.color} />
                     <G
-                      rotation={(i * oneTurn) / numberOfSegments + angleOffset}
+                      rotation={(i * this.oneTurn) / this.state.numItem + this.state.angleOffset}
                       origin={`${x}, ${y}`}
                     >
                       <Image
-                        href={number}
-                        x={x - fontSize / 2}
-                        y={y - 70}
-                        height={fontSize}
-                        width={fontSize}
+                        href={href}
+                        x={x - hw / 2}
+                        y={y - xy}
+                        height={hw}
+                        width={hw}
                       />
-                      {/* <Text
-                        x={x}
-                        y={y - 70}
-                        fill="white"
-                        textAnchor="middle"
-                        fontSize={fontSize}
-                      >
-                        {Array.from({ length: number.length }).map((_, j) => {
-                          return (
-                            <TSpan
-                              x={x}
-                              dy={fontSize}
-                              key={`arc-${i}-slice-${j}`}
-                            >
-                              {number.charAt(j)}
-                            </TSpan>
-                          );
-                        })}
-                      </Text> */}
                     </G>
                   </G>
                 );
@@ -233,18 +245,14 @@ class Temp extends React.Component {
   };
 
   render() {
+    const { enabled, finished } = this.state
     return (
-      <PanGestureHandler
-      // onHandlerStateChange={this._onPan}
-      // enabled={this.state.enabled}
-      >
-        <View style={styles.container}>
-          <TouchableOpacity onPress={this._onPan} disabled={!this.state.enabled}>
-            {this._renderSvgWheel()}
-          </TouchableOpacity>
-          {this.state.finished && this.state.enabled && this._renderWinner()}
-        </View>
-      </PanGestureHandler>
+      <View style={styles.container}>
+        <TouchableOpacity style={{ width: width * 0.95, height: width * 0.95 }} onPress={this._onPan} disabled={!enabled}>
+          {this._renderSvgWheel()}
+        </TouchableOpacity>
+        {finished && enabled && this._renderWinner()}
+      </View>
     );
   }
 
@@ -256,15 +264,67 @@ export default Temp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'pink',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    position: 'relative'
   },
   winnerText: {
     fontSize: 32,
     fontFamily: 'Menlo',
     position: 'absolute',
     bottom: 10
+  },
+  modalView: {
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    height: height,
+    width: width,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContent: {
+    backgroundColor: appColor.white,
+    width: width * 0.8,
+    borderRadius: scale(8),
+    paddingVertical: verticalScale(22),
+    alignItems: 'center'
+  },
+  txtTitle: {
+    fontSize: moderateScale(16),
+    color: appColor.dark_grey,
+    fontWeight: '700'
+  },
+  txtTeam: {
+    fontSize: moderateScale(20),
+    color: appColor.violet,
+    fontWeight: '700'
+  },
+  imgWin: {
+    height: scale(170),
+    width: scale(170),
+    marginTop: verticalScale(32),
+    marginBottom: verticalScale(12)
+  },
+  bottomView: {
+    paddingHorizontal: scale(22),
+    paddingTop: verticalScale(12),
+    width: '100%',
+    alignItems: 'flex-end'
+  },
+  btnBottom: {
+    borderRadius: verticalScale(20),
+    height: verticalScale(40),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: appColor.red,
+    borderWidth: 1,
+    width: scale(120)
+  },
+  txtBtn: {
+    fontWeight: '600',
+    color: appColor.red,
+    fontSize: moderateScale(18),
+    marginLeft: scale(10)
   }
+
 });
 

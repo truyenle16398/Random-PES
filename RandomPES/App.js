@@ -1,6 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Text, StatusBar } from "react-native";
+import { Provider } from 'react-redux';
 import Main from './src/navigator';
+import { store } from './src/store';
 
 const App = () => {
   return (
@@ -10,7 +12,9 @@ const App = () => {
         backgroundColor="transparent"
         barStyle={'dark-content'}
       />
-      <Main />
+      <Provider store={store}>
+        <Main />
+      </Provider>
     </View>
   );
 }

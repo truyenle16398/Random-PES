@@ -37,6 +37,47 @@ const listTeamStyles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     paddingHorizontal: scale(18),
+  },
+  myTouchable: {
+    height: verticalScale(68),
+    paddingHorizontal: scale(22),
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  img: {
+    height: scale(55),
+    width: scale(55)
+  },
+  txtName: {
+    fontSize: moderateScale(18),
+    fontWeight: '600',
+    marginLeft: scale(20)
+  },
+  btnBottom: {
+    height: verticalScale(50),
+    flex: 1,
+    borderRadius: verticalScale(25),
+    borderColor: color.violet,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: scale(8)
+  },
+  viewBottom: {
+    marginVertical: verticalScale(12),
+    justifyContent: 'space-between',
+    paddingHorizontal: scale(14)
+  },
+  txtBtn: {
+    fontWeight: '700',
+    fontSize: moderateScale(16)
+  },
+  rightAction: {
+    flex: 1,
+    backgroundColor: color.red,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    margin: scale(8),
   }
 
 })

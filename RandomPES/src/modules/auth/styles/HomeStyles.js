@@ -37,7 +37,7 @@ const homeStyles = StyleSheet.create({
   titleView: {
     justifyContent: 'space-between',
     paddingTop: verticalScale(18),
-    paddingBottom: verticalScale(4)
+    paddingBottom: verticalScale(8)
   },
   box: {
     width: scale(22),

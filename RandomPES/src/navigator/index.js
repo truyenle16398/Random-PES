@@ -9,7 +9,8 @@ const Stack = createStackNavigator();
 import {
   Home,
   Temp,
-  ListTeam
+  ListTeam,
+  AddNew
 } from "../modules";
 
 function Root() {
@@ -25,6 +26,7 @@ function Root() {
         <Stack.Screen name={Screen.HOME_SCREEN} component={Home} />
         <Stack.Screen name={Screen.TEMP_SCREEN} component={Temp} />
         <Stack.Screen name={Screen.LIST_TEAM_SCREEN} component={ListTeam} />
+        <Stack.Screen name={Screen.ADD_NEW_SCREEN} component={AddNew} />
       </Stack.Navigator>
     </NavigationContainer>
   );

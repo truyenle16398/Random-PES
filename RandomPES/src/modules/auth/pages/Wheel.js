@@ -6,17 +6,22 @@ import {
   Animated,
   TouchableOpacity,
   Pressable,
-  Image as RNImg
+  Image as RNImg,
+  UIManager,
+  LayoutAnimation,
+  FlatList,
+  ToastAndroid
 } from 'react-native';
 import * as d3Shape from 'd3-shape';
 import color from 'randomcolor';
 import { color as appColor } from "../../../utils";
 import { snap } from '@popmotion/popcorn';
 import { Path, G, Svg, Image } from "react-native-svg";
-import { scale } from "../../../utils/ScalingUtils";
+import { scale, verticalScale } from "../../../utils/ScalingUtils";
 import { wheelStyles as styles } from "../styles";
-import { IconBack, IconSound, IconNoSound } from "../../../assets/svg/ic_svg";
+import { IconBack, IconSound, IconNoSound, IconHistory } from "../../../assets/svg/ic_svg";
 import { navigationRef } from "../../../constants/nav.constants";
+import Sound from "react-native-sound";
 const { width } = Dimensions.get('screen');
 
 const makeWheel = (arr) => {//generator data wheel
@@ -54,15 +59,25 @@ class Wheel extends React.Component {
       angleItem: 1,
       angleOffset: 1,
       _wheelPaths: [],
-      isSound: true
+      isSound: true,
+      listHistory: [],
+      isShowHistory: false
     }
   }
   _angle = new Animated.Value(0);
   angle = 0;
   oneTurn = 360;
+  soundEffect = new Sound('spin.mp3', Sound.MAIN_BUNDLE, (err) => {
+    if (err) {
+      return;
+    }
+  })
 
 
   componentDidMount() {
+    if (Platform.OS === 'android') {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
     const { route } = this.props || {}
     const { params } = route || {}
     const { data } = params || []
@@ -95,7 +110,17 @@ class Wheel extends React.Component {
     return Math.round(deg / this.state.angleItem);
   };
 
+  playSoundFinish = () => {
+    let sound = new Sound('yay.mp3', Sound.MAIN_BUNDLE, (err) => {
+      if (err) {
+        return;
+      }
+      sound.play()
+    })
+  }
+
   _onPan = () => {
+    this.state.isSound && this.soundEffect.play()
     let a = Math.floor(Math.random() * 10) + 1
     Animated.decay(this._angle, {
       velocity: -a,
@@ -110,21 +135,25 @@ class Wheel extends React.Component {
         useNativeDriver: true
       }).start(() => {
         const winnerIndex = this._getWinnerIndex();
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         this.setState({
           enabled: true,
           finished: true,
-          winner: this.state._wheelPaths[winnerIndex].value
+          winner: this.state._wheelPaths[winnerIndex].value,
+          listHistory: [winnerIndex, ...this.state.listHistory]
         });
       });
+      this.state.isSound && this.playSoundFinish()
     });
   };
 
   _renderKnob = () => {
+    const { angleOffset, angleItem } = this.state
     const knobSize = 30;
     const YOLO = Animated.modulo(
       Animated.divide(
-        Animated.modulo(Animated.subtract(this._angle, this.state.angleOffset), this.oneTurn),
-        new Animated.Value(this.state.angleItem)
+        Animated.modulo(Animated.subtract(this._angle, angleOffset), this.oneTurn),
+        new Animated.Value(angleItem)
       ),
       1
     );
@@ -177,7 +206,10 @@ class Wheel extends React.Component {
       <View style={{ position: 'absolute' }}>
         <Pressable
           style={styles.modalView}
-          onPress={() => this.setState({ finished: false })}
+          onPress={() => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+            this.setState({ finished: false })
+          }}
         >
           <View style={styles.modalContent}>
             <RNText style={styles.txtTitle}>Đội được chọn: </RNText>
@@ -193,6 +225,52 @@ class Wheel extends React.Component {
       </View>
     );
   };
+
+  _renderHistory = () => {
+    const { listHistory, data } = this.state
+    return (
+      <View style={styles.modalWrapper}>
+        <Pressable
+          style={styles.modalView}
+          onPress={() => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+            this.setState({ isShowHistory: false })
+          }}
+        >
+        </Pressable>
+        <View style={styles.modalContent}>
+          <RNText style={styles.txtTitle}>Các kết quả: </RNText>
+          <FlatList
+            data={listHistory}
+            showsVerticalScrollIndicator={false}
+            style={{ height: verticalScale(170) }}
+            keyExtractor={(contact, index) => String(index)}
+            contentContainerStyle={{ width: width }}
+            renderItem={({ item, index }) => {
+              return (
+                <View style={[styles.myRow, {
+                  backgroundColor: index % 2 === 0 ? appColor.grey : appColor.white,
+                  paddingVertical: (verticalScale(5))
+                }]}>
+                  <RNImg
+                    source={{ uri: data[item]?.logo }}
+                    resizeMode='contain'
+                    style={styles.imgHistory}
+                  />
+                  <RNText>{data[item].name}</RNText>
+                </View>
+              )
+            }}
+          />
+          <View style={styles.bottomView}>
+            <TouchableOpacity style={styles.btnBottom} onPress={() => this.setState({ listHistory: [] })}>
+              <RNText style={styles.txtBtn}>Xóa hết</RNText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   _renderSvgWheel = () => {
     return (
@@ -249,29 +327,44 @@ class Wheel extends React.Component {
     );
   };
 
+  showHistory = () => { 
+    this.state.listHistory.length > 0 
+    ? this.setState({ isShowHistory: true }) 
+    : ToastAndroid.show('Chưa có lịch sử', ToastAndroid.LONG)
+  }
+
   render() {
-    const { enabled, finished, isSound } = this.state
+    const { enabled, finished, isSound, isShowHistory } = this.state
     return (
       <View style={styles.container}>
         <View style={[styles.header, styles.myRow]}>
           <View style={styles.myRow}>
-            <TouchableOpacity onPress={() => {
-              navigationRef.current.goBack()
-            }}>
+            <TouchableOpacity
+              disabled={!enabled}
+              onPress={() => {
+                navigationRef.current.goBack()
+              }}>
               <IconBack />
             </TouchableOpacity>
-            <RNText style={styles.txtHeader}>Thêm mới</RNText>
+            <RNText style={styles.txtHeader}>Quay lại</RNText>
+          </View>
+          <View style={styles.myRow}>
+            <TouchableOpacity disabled={!enabled} style={styles.btnSound} onPress={() => this.setState({ isSound: !isSound })}>
+              {isSound ? <IconSound /> : <IconNoSound />}
+            </TouchableOpacity>
+            <TouchableOpacity disabled={!enabled} style={styles.btnSound} onPress={this.showHistory}>
+              <IconHistory />
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.content}>
-          <TouchableOpacity style={styles.btnSound} onPress={() => this.setState({ isSound: !isSound })}>
-            {isSound ? <IconSound /> : <IconNoSound />}
-          </TouchableOpacity>
+
           <TouchableOpacity style={styles.btnWheel} onPress={this._onPan} disabled={!enabled}>
             {this._renderSvgWheel()}
           </TouchableOpacity>
         </View>
         {finished && enabled && this._renderWinner()}
+        {isShowHistory && this._renderHistory()}
       </View>
     );
   }

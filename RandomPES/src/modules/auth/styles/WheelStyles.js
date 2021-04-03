@@ -27,11 +27,13 @@ const wheelStyles = StyleSheet.create({
     alignItems: 'center'
   },
   modalContent: {
-    backgroundColor: color.white,
+    backgroundColor: color.grey,
     width: width * 0.8,
     borderRadius: scale(8),
     paddingVertical: verticalScale(22),
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'absolute',
+    alignSelf: 'center'
   },
   txtTitle: {
     fontSize: moderateScale(16),
@@ -53,7 +55,7 @@ const wheelStyles = StyleSheet.create({
     paddingHorizontal: scale(22),
     paddingTop: verticalScale(12),
     width: '100%',
-    alignItems: 'flex-end'
+    alignItems: 'center'
   },
   btnBottom: {
     borderRadius: verticalScale(20),
@@ -96,8 +98,17 @@ const wheelStyles = StyleSheet.create({
   },
   btnSound: {
     padding: scale(8),
-    marginHorizontal: scale(22),
     alignSelf: 'flex-end'
+  },
+  modalWrapper: { 
+    position: 'absolute', 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  imgHistory: {
+    height: scale(40),
+     width: scale(40),
+      marginHorizontal: scale(10)
   }
 });
 

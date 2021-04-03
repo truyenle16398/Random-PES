@@ -15,6 +15,7 @@ import { IconHeader, IconSelectBox, IconTick } from "../../../assets/svg/ic_svg"
 import { homeStyles as styles } from "../styles";
 import { useSelector } from 'react-redux';
 import SplashScreen from 'react-native-splash-screen'
+import Sound from "react-native-sound";
 
 const SelectBox = ({ isCheck }) => {
   return (
@@ -82,7 +83,7 @@ const Home = ({ navigation }) => {
   const renderTouchable = ({ item }) => {
     return (
       <TouchableOpacity activeOpacity={0.7} style={[styles.myTouchable, styles.myShadow]} onPress={() => onPressTouchable(item)}>
-        <Image source={{uri: item.img}} style={styles.btnImg} />
+        <Image source={{ uri: item?.img }} style={styles.btnImg} />
         {
           item?.select && (
             <IconCheck />
@@ -115,14 +116,10 @@ const Home = ({ navigation }) => {
   }
 
   const onPressNext = () => {
-    let temp = []
-    data.map((item, index) => {
-      if (item.select) {
-        temp = [...temp, ...item.list_team]
-      }
-    })
-    if (temp.length > 0) {
-      navigation.navigate(Screen.LIST_TEAM_SCREEN, { data: temp })
+    let arr = []
+    data.filter(item => item.select).map((i) => arr = [...arr, ...i.list_team])
+    if (data.length > 0) {
+      navigation.navigate(Screen.LIST_TEAM_SCREEN, { data: arr })
     } else {
       if (Platform.OS === 'ios') {
         Alert.alert('Chưa chọn đội nào', 'Chọn ít nhất 1 giải đấu');

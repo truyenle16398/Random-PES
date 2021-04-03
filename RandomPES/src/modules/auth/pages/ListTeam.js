@@ -114,7 +114,7 @@ const ListTeam = ({ navigation, route }) => {
 
   const goToRandom = () => {
     if (dataConst && dataConst?.length > 1) {
-      navigation.navigate(Screen.WHEEL_SCREEN, { data: dataConst })
+      navigation.navigate(Screen.WHEEL_SCREEN, { data: dataConst.sort(() => Math.random() - 0.5) })
     } else {
       ToastAndroid.show('Chọn ít nhất 2 đội bóng', ToastAndroid.LONG)
     }

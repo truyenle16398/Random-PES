@@ -7,6 +7,9 @@
 ## Link to Download  :
 <a href="#"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>
 
+## Link Design:  :
+<a href="https://www.figma.com/file/04GkWjbqLkPOJ0WPICIN0z/RANDOM-PES?node-id=0%3A1"><img alt="Get it on Google Play" src="https://i.pinimg.com/originals/a5/58/b4/a558b426cb8973523f37bbed94cf0f09.png" height=60px /></a>
+
 ## Mockup User Inteface Demo
 (This is UI of application drawed by Photoshop SC6)
 ![mockup_transparent](https://user-images.githubusercontent.com/55780534/82993099-45e61a80-a02a-11ea-92f3-392ebc8721d2.png)

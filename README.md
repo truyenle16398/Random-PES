@@ -27,6 +27,7 @@
                 <img alt="Screenshoot Result Screen" src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/Screenshot_2021-04-03-13-25-41-683_com.randompes%5B1%5D.jpg?alt=media" height=320px />
                 <img alt="Screenshoot History Screen" src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/Screenshot_2021-04-03-13-26-01-466_com.randompes%5B1%5D.jpg?alt=media" height=320px />
   </p>
+  
   ## [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ```
    Copyright 2020 Truyền Lê

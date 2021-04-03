@@ -12,8 +12,6 @@
 
 ## Mockup User Inteface Demo
 (This is UI of application drawed by Photoshop SC6)
-## Mockup User Inteface Demo
-(This is UI of application drawed by Photoshop SC6)
 ![mockup_transparent](https://user-images.githubusercontent.com/55780534/113471168-c6647b80-9484-11eb-9755-3bff4f13b5e7.png)
 
 

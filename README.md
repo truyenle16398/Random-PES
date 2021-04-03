@@ -1,4 +1,4 @@
-# <img src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/ic_launcher.png?alt=media" height=24px /></a> Random PES 🚧👷🔧️
+# <img src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/ic_launcher.png?alt=media" height=44px /></a> Random PES 🚧👷🔧️
 ##### Hello everyone! This is a application "pick random football team for PES"
 
 ## Developed by : 

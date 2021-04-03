@@ -1,13 +1,13 @@
-# Random PES 🚧👷🔧️
+# <img src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/ic_launcher.png?alt=media" height=24px /></a> Random PES 🚧👷🔧️
 ##### Hello everyone! This is a application "pick random football team for PES"
 
 ## Developed by : 
 * TruyenLe: https://facebook.com/lhtruyen/
 
-## Link to Download  :
+## Link to Download:
 <a href="#"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>
 
-## Link Design:  :
+## Link Design:
 <a href="https://www.figma.com/file/04GkWjbqLkPOJ0WPICIN0z/RANDOM-PES?node-id=0%3A1"><img alt="Get it on Google Play" src="https://i.pinimg.com/originals/a5/58/b4/a558b426cb8973523f37bbed94cf0f09.png" height=60px /></a>
 
 ## Mockup User Inteface Demo

@@ -1,4 +1,4 @@
-# <img src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/ic_launcher.png?alt=media" height=44px /></a> Random PES 🚧👷🔧️
+# <img src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/ic_launcher.png?alt=media" height=44px /> Random PES 🚧👷🔧️
 ##### Hello everyone! This is a application "pick random football team for PES"
 
 ## Developed by : 
@@ -15,8 +15,7 @@
 ![mockup_transparent](https://user-images.githubusercontent.com/55780534/82993099-45e61a80-a02a-11ea-92f3-392ebc8721d2.png)
 
   ## Screenshoot
-  <img alt="Screenshoot Splash Screen" src="
-https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/bg.png?alt=media" height=230px /></a>
+  <img alt="Screenshoot Splash Screen" src="https://firebasestorage.googleapis.com/v0/b/randompes-32f21.appspot.com/o/bg.png?alt=media" height=230px />
   ## [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ```
    Copyright 2020 Truyền Lê

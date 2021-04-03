@@ -5,7 +5,7 @@
 * TruyenLe: https://facebook.com/lhtruyen/
 
 ## Link to Download:
-<a href="#"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>
+<a href="https://drive.google.com/file/d/11CnUWDQSk03nCatkwBKHRifBkH_IfvSV/view?usp=sharing"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>
 
 ## Link Design:
 <a href="https://www.figma.com/file/04GkWjbqLkPOJ0WPICIN0z/RANDOM-PES?node-id=0%3A1"><img alt="Get it on Google Play" src="https://i.pinimg.com/originals/a5/58/b4/a558b426cb8973523f37bbed94cf0f09.png" height=60px /></a>

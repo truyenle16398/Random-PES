@@ -12,7 +12,10 @@
 
 ## Mockup User Inteface Demo
 (This is UI of application drawed by Photoshop SC6)
-![mockup_transparent](https://user-images.githubusercontent.com/55780534/82993099-45e61a80-a02a-11ea-92f3-392ebc8721d2.png)
+## Mockup User Inteface Demo
+(This is UI of application drawed by Photoshop SC6)
+![mockup_transparent](https://user-images.githubusercontent.com/55780534/113471168-c6647b80-9484-11eb-9755-3bff4f13b5e7.png)
+
 
   ## Screenshoot
   <p float="left">

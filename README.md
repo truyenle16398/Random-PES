@@ -1,7 +1,8 @@
 # Random PES 🚧👷🔧️
 ##### Hello everyone! This is a application "pick random football team for PES"
 
-## Developed by : * TruyenLe: https://github.com/truyenle16398/
+## Developed by : 
+* TruyenLe: https://github.com/truyenle16398/
 
 ## Link to Download  :
 <a href="#"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>

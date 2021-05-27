@@ -74,8 +74,9 @@ const wheelStyles = StyleSheet.create({
   },
   btnWheel: {
     width: width * 0.95,
-    height: width * 0.95,
-    marginTop: verticalScale(100)
+    height: width + verticalScale(60),
+    borderRadius: verticalScale(60),
+    marginTop: verticalScale(100),
   },
   myRow: {
     flexDirection: 'row',
@@ -100,15 +101,38 @@ const wheelStyles = StyleSheet.create({
     padding: scale(8),
     alignSelf: 'flex-end'
   },
-  modalWrapper: { 
-    position: 'absolute', 
-    alignItems: 'center', 
-    justifyContent: 'center' 
+  modalWrapper: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   imgHistory: {
     height: scale(40),
-     width: scale(40),
-      marginHorizontal: scale(10)
+    width: scale(40),
+    marginHorizontal: scale(10)
+  },
+  txtHint: {
+    fontSize: 18,
+    marginTop: verticalScale(12),
+    fontWeight: 'bold',
+    color: 'silver'
+  },
+  btnBack: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  listHistoryContainer: {
+    width: width
+  },
+  listHistoryStyle: {
+    height: verticalScale(170)
+  },
+  itemHis: (index) => ({
+    backgroundColor: index % 2 === 0 ? color.white : color.grey,
+    paddingVertical: verticalScale(5)
+  }),
+  knob: {
+    alignItems: 'center'
   }
 });
 

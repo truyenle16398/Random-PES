@@ -10,7 +10,8 @@ import {
   Home,
   Wheel,
   ListTeam,
-  AddNew
+  AddNew,
+  SplashScr
 } from "../modules";
 import { navigationRef } from '../constants/nav.constants';
 
@@ -23,7 +24,8 @@ function Root() {
           gestureDirection: 'horizontal',
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
-        initialRouteName={Screen.HOME_SCREEN}>
+        initialRouteName={Screen.SPLASH_SCREEN}>
+        <Stack.Screen name={Screen.SPLASH_SCREEN} component={SplashScr} />
         <Stack.Screen name={Screen.HOME_SCREEN} component={Home} />
         <Stack.Screen name={Screen.WHEEL_SCREEN} component={Wheel} />
         <Stack.Screen name={Screen.LIST_TEAM_SCREEN} component={ListTeam} />

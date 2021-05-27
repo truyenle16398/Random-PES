@@ -73,6 +73,7 @@ class Wheel extends React.Component {
     }
   })
 
+  goBack = () => navigationRef.current.goBack()
 
   componentDidMount() {
     if (Platform.OS === 'android') {
@@ -147,7 +148,7 @@ class Wheel extends React.Component {
     });
   };
 
-  _renderKnob = () => {
+  renderKnob = () => {
     const { angleOffset, angleItem } = this.state
     const knobSize = 30;
     const YOLO = Animated.modulo(
@@ -157,35 +158,32 @@ class Wheel extends React.Component {
       ),
       1
     );
+    const style = {
+      width: knobSize,
+      height: knobSize * 2,
+      justifyContent: 'flex-end',
+      zIndex: 1,
+      transform: [
+        {
+          rotate: YOLO.interpolate({
+            inputRange: [-1, -0.5, -0.0001, 0.0001, 0.5, 1],
+            outputRange: ['0deg', '0deg', '-35deg', '35deg', '0deg', '0deg']
+          })
+        }
+      ]
+    }
+    const knob = 'M28.034,0C12.552,0,0,12.552,0,28.034S28.034,100,28.034,100s28.034-56.483,28.034-71.966S43.517,0,28.034,0z   M28.034,40.477c-6.871,0-12.442-5.572-12.442-12.442c0-6.872,5.571-12.442,12.442-12.442c6.872,0,12.442,5.57,12.442,12.442  C40.477,34.905,34.906,40.477,28.034,40.477z'
 
     return (
-      <View style={{ alignItems: 'center' }} >
-        <Animated.View
-          style={{
-            width: knobSize,
-            height: knobSize * 2,
-            justifyContent: 'flex-end',
-            zIndex: 1,
-            transform: [
-              {
-                rotate: YOLO.interpolate({
-                  inputRange: [-1, -0.5, -0.0001, 0.0001, 0.5, 1],
-                  outputRange: ['0deg', '0deg', '-35deg', '35deg', '0deg', '0deg']
-                })
-              }
-            ]
-          }}
-        >
+      <View style={styles.knob} >
+        <Animated.View style={style} >
           <Svg
             width={knobSize}
             height={(knobSize * 100) / 57}
             viewBox={`0 0 57 100`}
             style={{ transform: [{ translateY: 8 }] }}
           >
-            <Path
-              d="M28.034,0C12.552,0,0,12.552,0,28.034S28.034,100,28.034,100s28.034-56.483,28.034-71.966S43.517,0,28.034,0z   M28.034,40.477c-6.871,0-12.442-5.572-12.442-12.442c0-6.872,5.571-12.442,12.442-12.442c6.872,0,12.442,5.57,12.442,12.442  C40.477,34.905,34.906,40.477,28.034,40.477z"
-              fill={appColor.violet}
-            />
+            <Path d={knob} fill={appColor.violet} />
           </Svg>
         </Animated.View>
       </View>
@@ -195,75 +193,70 @@ class Wheel extends React.Component {
   onRemove = () => {
     const { winner, data } = this.state
     if (data?.length > 2) {
-      this.setData(data.filter(item => item.id !== winner.id))
+      this.setData(data.filter(i => i.id !== winner.id))
     }
     this.setState({ finished: false })
   }
 
-  _renderWinner = () => {
+  onCloseWinner = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+    this.setState({ finished: false })
+  }
+
+  renderWinner = () => {
     const { winner } = this.state
     return (
-      <View style={{ position: 'absolute' }}>
-        <Pressable
-          style={styles.modalView}
-          onPress={() => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-            this.setState({ finished: false })
-          }}
-        >
-          <View style={styles.modalContent}>
-            <RNText style={styles.txtTitle}>Đội được chọn: </RNText>
-            <RNImg source={{ uri: winner?.logo }} style={styles.imgWin} resizeMode='contain' />
-            <RNText style={styles.txtTeam}>{winner?.name?.toUpperCase()}</RNText>
-            <View style={styles.bottomView}>
-              <TouchableOpacity style={styles.btnBottom} onPress={this.onRemove}>
-                <RNText style={styles.txtBtn}>Xóa tên</RNText>
-              </TouchableOpacity>
-            </View>
+      <View style={styles.modalWrapper}>
+        <Pressable style={styles.modalView} onPress={this.onCloseWinner} />
+        <View style={styles.modalContent}>
+          <RNText style={styles.txtTitle}>Đội được chọn: </RNText>
+          <RNImg source={{ uri: winner?.logo }} style={styles.imgWin} resizeMode='contain' />
+          <RNText style={styles.txtTeam}>{winner?.name?.toUpperCase()}</RNText>
+          <View style={styles.bottomView}>
+            <TouchableOpacity style={styles.btnBottom} onPress={this.onRemove}>
+              <RNText style={styles.txtBtn}>Xóa tên</RNText>
+            </TouchableOpacity>
           </View>
-        </Pressable>
-      </View>
+        </View>
+      </View >
     );
   };
 
-  _renderHistory = () => {
-    const { listHistory, data } = this.state
+  onCloseHistory = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+    this.setState({ isShowHistory: false })
+  }
+
+  keyExtractor = (contact, index) => String(index)
+  clearListHistory = () => this.setState({ listHistory: [] })
+
+  renderHistoryItem = ({ item, index }) => {
+    const { data } = this.state
+    return (
+      <View style={[styles.myRow, styles.itemHis(index)]}>
+        <RNImg source={{ uri: data[item]?.logo }} resizeMode='contain' style={styles.imgHistory} />
+        <RNText>{data[item].name.toUpperCase()}</RNText>
+      </View>
+    )
+  }
+
+  renderHistory = () => {
+    const { listHistory } = this.state
     return (
       <View style={styles.modalWrapper}>
-        <Pressable
-          style={styles.modalView}
-          onPress={() => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-            this.setState({ isShowHistory: false })
-          }}
-        >
-        </Pressable>
+        <Pressable style={styles.modalView} onPress={this.onCloseHistory} />
         <View style={styles.modalContent}>
           <RNText style={styles.txtTitle}>Các kết quả: </RNText>
           <FlatList
             data={listHistory}
+            style={styles.listHistoryStyle}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderHistoryItem}
             showsVerticalScrollIndicator={false}
-            style={{ height: verticalScale(170) }}
-            keyExtractor={(contact, index) => String(index)}
-            contentContainerStyle={{ width: width }}
-            renderItem={({ item, index }) => {
-              return (
-                <View style={[styles.myRow, {
-                  backgroundColor: index % 2 === 0 ? appColor.grey : appColor.white,
-                  paddingVertical: (verticalScale(5))
-                }]}>
-                  <RNImg
-                    source={{ uri: data[item]?.logo }}
-                    resizeMode='contain'
-                    style={styles.imgHistory}
-                  />
-                  <RNText>{data[item].name}</RNText>
-                </View>
-              )
-            }}
+            contentContainerStyle={styles.listHistoryContainer}
           />
           <View style={styles.bottomView}>
-            <TouchableOpacity style={styles.btnBottom} onPress={() => this.setState({ listHistory: [] })}>
+            <TouchableOpacity style={styles.btnBottom} onPress={this.clearListHistory}>
               <RNText style={styles.txtBtn}>Xóa hết</RNText>
             </TouchableOpacity>
           </View>
@@ -273,49 +266,40 @@ class Wheel extends React.Component {
   }
 
   _renderSvgWheel = () => {
+    const { angleOffset, _wheelPaths, angleItem, numItem } = this.state
+    const style = {
+      alignItems: 'center',
+      justifyContent: 'center',
+      transform: [
+        {
+          rotate: this._angle.interpolate({
+            inputRange: [-this.oneTurn, 0, this.oneTurn],
+            outputRange: [`-${this.oneTurn}deg`, `0deg`, `${this.oneTurn}deg`]
+          })
+        }
+      ]
+    }
     return (
       <View style={styles.container}>
-        {this._renderKnob()}
-        <Animated.View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: [
-              {
-                rotate: this._angle.interpolate({
-                  inputRange: [-this.oneTurn, 0, this.oneTurn],
-                  outputRange: [`-${this.oneTurn}deg`, `0deg`, `${this.oneTurn}deg`]
-                })
-              }
-            ]
-          }}
-        >
+        {this.renderKnob()}
+        <Animated.View style={style}>
           <Svg
             width={width * 0.95}
             height={width * 0.95}
             viewBox={`0 0 ${width} ${width}`}
-            style={{ transform: [{ rotate: `-${this.state.angleOffset}deg` }] }}
+            style={{ transform: [{ rotate: `-${angleOffset}deg` }] }}
           >
             <G y={width / 2} x={width / 2}>
-              {this.state._wheelPaths.map((arc, i) => {
+              {_wheelPaths.map((arc, i) => {
                 const [x, y] = arc.centroid;
                 const href = arc.value.logo;
-                const hw = this.state.angleItem * (scale(10) / scale(6)) > 199 ? scale(150) : this.state.angleItem * (scale(10) / scale(6))
+                const hw = angleItem * (scale(10) / scale(6)) > 199 ? scale(150) : angleItem * (scale(10) / scale(6))
                 let xy = hw / 2 < 75 ? scale(75) : hw / 2
                 return (
                   <G key={`arc-${i}`}>
                     <Path d={arc.path} fill={arc.color} />
-                    <G
-                      rotation={(i * this.oneTurn) / this.state.numItem + this.state.angleOffset}
-                      origin={`${x}, ${y}`}
-                    >
-                      <Image
-                        href={href}
-                        x={x - hw / 2}
-                        y={y - xy}
-                        height={hw}
-                        width={hw}
-                      />
+                    <G rotation={(i * this.oneTurn) / numItem + angleOffset} origin={`${x}, ${y}`} >
+                      <Image href={href} x={x - hw / 2} y={y - xy} height={hw} width={hw} />
                     </G>
                   </G>
                 );
@@ -327,11 +311,12 @@ class Wheel extends React.Component {
     );
   };
 
-  showHistory = () => { 
-    this.state.listHistory.length > 0 
-    ? this.setState({ isShowHistory: true }) 
-    : ToastAndroid.show('Chưa có lịch sử', ToastAndroid.LONG)
+  showHistory = () => {
+    const { listHistory } = this.state
+    listHistory.length > 0 && this.setState({ isShowHistory: true })
   }
+
+  toggleSound = () => this.setState({ isSound: !isSound })
 
   render() {
     const { enabled, finished, isSound, isShowHistory } = this.state
@@ -339,17 +324,13 @@ class Wheel extends React.Component {
       <View style={styles.container}>
         <View style={[styles.header, styles.myRow]}>
           <View style={styles.myRow}>
-            <TouchableOpacity
-              disabled={!enabled}
-              onPress={() => {
-                navigationRef.current.goBack()
-              }}>
+            <TouchableOpacity disabled={!enabled} onPress={this.goBack} style={styles.btnBack}>
               <IconBack />
+              <RNText style={styles.txtHeader}>Chọn đội</RNText>
             </TouchableOpacity>
-            <RNText style={styles.txtHeader}>Quay lại</RNText>
           </View>
           <View style={styles.myRow}>
-            <TouchableOpacity disabled={!enabled} style={styles.btnSound} onPress={() => this.setState({ isSound: !isSound })}>
+            <TouchableOpacity disabled={!enabled} style={styles.btnSound} onPress={this.toggleSound}>
               {isSound ? <IconSound /> : <IconNoSound />}
             </TouchableOpacity>
             <TouchableOpacity disabled={!enabled} style={styles.btnSound} onPress={this.showHistory}>
@@ -362,9 +343,10 @@ class Wheel extends React.Component {
           <TouchableOpacity style={styles.btnWheel} onPress={this._onPan} disabled={!enabled}>
             {this._renderSvgWheel()}
           </TouchableOpacity>
+          {enabled && <RNText style={styles.txtHint}>Chạm vào vòng xoay để bắt đầu random!</RNText>}
         </View>
-        {finished && enabled && this._renderWinner()}
-        {isShowHistory && this._renderHistory()}
+        {finished && enabled && this.renderWinner()}
+        {isShowHistory && this.renderHistory()}
       </View>
     );
   }

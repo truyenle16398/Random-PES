@@ -7,66 +7,40 @@ import {
   Image,
   ToastAndroid,
   Platform,
-  Alert,
+  Alert
 } from 'react-native';
 import { color } from "../../../utils";
-import { Screen } from "../../../constants";
-import { IconHeader, IconSelectBox, IconTick } from "../../../assets/svg/ic_svg";
+import { Screen, DATA } from "../../../constants";
+import { IconHeader } from "../../../assets/svg/ic_svg";
 import { homeStyles as styles } from "../styles";
-import { useSelector } from 'react-redux';
 import SplashScreen from 'react-native-splash-screen'
-import Sound from "react-native-sound";
-
-const SelectBox = ({ isCheck }) => {
-  return (
-    <>
-      {
-        isCheck ? <IconSelectBox /> : <View style={styles.box} />
-      }
-    </>
-  )
-}
-
-const IconCheck = () => {
-  return (
-    <View style={[styles.iconTick, styles.myShadow]}>
-      <IconTick />
-    </View>
-  )
-}
+import { IconCheck, SelectBox } from "../components";
 
 const Home = ({ navigation }) => {
-  const authReducer = useSelector(state => state.authReducer)
-  const { list_data } = authReducer || []
-  const [data, setData] = useState(list_data)
+  const [data, setData] = useState(DATA)
   const [allClub, setAllClub] = useState(false)
   const [allNational, setAllNational] = useState(false)
 
   useEffect(() => {
-    SplashScreen.hide();
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1000);
   }, [])
 
-
   useEffect(() => {
-    list_data && setData(list_data)
-  }, [list_data])
-
-
-  useEffect(() => {
-    let isAllClub = true;
-    let isAllNational = true
-    data.map((item, index) => {
+    let isAllClub = true, isAllNational = true
+    data.map((item) => {
       if (!item.select) {
-        if (item.type === 'CLUB') {
-          isAllClub = false
-        } else {
-          isAllNational = false
-        }
+        item.type === 'CLUB'
+          ? isAllClub = false
+          : isAllNational = false
       }
     })
     setAllNational(isAllNational)
     setAllClub(isAllClub)
   }, [data])
+
+  const keyExtractor = (contact, index) => String(index)
 
   const onPressTouchable = (e) => {
     setData((prev) => {
@@ -84,11 +58,7 @@ const Home = ({ navigation }) => {
     return (
       <TouchableOpacity activeOpacity={0.7} style={[styles.myTouchable, styles.myShadow]} onPress={() => onPressTouchable(item)}>
         <Image source={{ uri: item?.img }} style={styles.btnImg} />
-        {
-          item?.select && (
-            <IconCheck />
-          )
-        }
+        {item?.select && <IconCheck />}
       </TouchableOpacity>
     )
   }
@@ -118,7 +88,7 @@ const Home = ({ navigation }) => {
   const onPressNext = () => {
     let arr = []
     data.filter(item => item.select).map((i) => arr = [...arr, ...i.list_team])
-    if (data.length > 0) {
+    if (arr.length > 0) {
       navigation.navigate(Screen.LIST_TEAM_SCREEN, { data: arr })
     } else {
       if (Platform.OS === 'ios') {
@@ -129,53 +99,57 @@ const Home = ({ navigation }) => {
     }
   }
 
+  const headerComponent = () => {
+    return (
+      <View style={[styles.myRow, styles.titleView]}>
+        <Text style={styles.txtTitle}>Giải đấu</Text>
+        <TouchableOpacity onPress={onSelectAllClub} style={styles.btnSelect}>
+          <SelectBox isCheck={allClub} />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  const footerComponent = () => {
+    return (
+      <View>
+        <View style={[styles.myRow, styles.titleView]}>
+          <Text style={styles.txtTitle}>Giải đấu</Text>
+          <TouchableOpacity onPress={onSelectAllClubNational} style={styles.btnSelect}>
+            <SelectBox isCheck={allNational} />
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          numColumns={2}
+          keyExtractor={keyExtractor}
+          renderItem={renderTouchable}
+          data={data.filter(e => e.type === 'NATIONAL')}
+        />
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
-
       {/* HEADER */}
       <View style={[styles.header, styles.myRow]}>
         <View style={styles.myRow}>
           <IconHeader />
           <Text style={styles.txtHeader}>Chọn giải đấu</Text>
         </View>
-        <TouchableOpacity onPress={onPressNext}>
+        <TouchableOpacity onPress={onPressNext} style={styles.btnNext}>
           <Text style={[styles.txtHeader, { color: color.violet }]}>Tiếp theo</Text>
         </TouchableOpacity>
       </View>
+      {/* CONTENT */}
       <View style={styles.content}>
         <FlatList
-          data={data.filter(item => item.type === 'CLUB')}
-          keyExtractor={(contact, index) => String(index)}
-          renderItem={renderTouchable}
           numColumns={2}
-          ListHeaderComponent={() => {
-            return (
-              <View style={[styles.myRow, styles.titleView]}>
-                <Text style={styles.txtTitle}>Giải đấu</Text>
-                <TouchableOpacity onPress={onSelectAllClub}>
-                  <SelectBox isCheck={allClub} />
-                </TouchableOpacity>
-              </View>
-            )
-          }}
-          ListFooterComponent={() => {
-            return (
-              <>
-                <View style={[styles.myRow, styles.titleView]}>
-                  <Text style={styles.txtTitle}>Giải đấu</Text>
-                  <TouchableOpacity onPress={onSelectAllClubNational}>
-                    <SelectBox isCheck={allNational} />
-                  </TouchableOpacity>
-                </View>
-                <FlatList
-                  data={data.filter(item => item.type === 'NATIONAL')}
-                  keyExtractor={(contact, index) => String(index)}
-                  renderItem={renderTouchable}
-                  numColumns={2}
-                />
-              </>
-            )
-          }}
+          keyExtractor={keyExtractor}
+          renderItem={renderTouchable}
+          ListHeaderComponent={headerComponent}
+          ListFooterComponent={footerComponent}
+          data={data.filter(e => e.type === 'CLUB')}
         />
       </View>
     </View>

@@ -33,17 +33,18 @@ const listTeamStyles = StyleSheet.create({
     height: verticalScale(50),
     borderRadius: verticalScale(25),
     flex: 1,
-    marginLeft: scale(12), flexDirection: 'row',
+    flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
     paddingHorizontal: scale(18),
   },
-  myTouchable: {
+  myTouchable: (index) => ({
     height: verticalScale(68),
     paddingHorizontal: scale(22),
     alignItems: 'center',
-    flexDirection: 'row'
-  },
+    flexDirection: 'row',
+    backgroundColor: index % 2 === 0 ? color.grey : color.white
+  }),
   img: {
     height: scale(55),
     width: scale(55)
@@ -71,24 +72,12 @@ const listTeamStyles = StyleSheet.create({
     fontWeight: '700',
     fontSize: moderateScale(16)
   },
-  rightAction: {
-    flex: 1,
-    backgroundColor: color.red,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 4,
-    margin: scale(8),
-  },
   txtEmpty: {
     marginVertical: verticalScale(12),
     fontWeight: '700',
     color: color.dark_grey,
     textAlign: 'center'
   },
-  bgBtnDel:(bgColor) => ({
-    flex: .25,
-    backgroundColor: bgColor
-  }),
   emptyComponent: {
     flex: 1,
     justifyContent: 'center'
@@ -100,14 +89,17 @@ const listTeamStyles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   imgBall: {
-    height: scale(137),
-    width: scale(137)
+    height: verticalScale(137),
+    width: verticalScale(137)
   },
   flex1: {
     flex: 1
   },
   containerStyles: {
     flexGrow: 1
+  },
+  pading12: {
+    padding: scale(12)
   }
 })
 

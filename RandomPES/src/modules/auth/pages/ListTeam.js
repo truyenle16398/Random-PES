@@ -1,32 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Image, TextInput, Animated, ToastAndroid } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, Image, TextInput, ToastAndroid } from 'react-native';
 import { color } from "../../../utils";
 import { Screen } from "../../../constants";
 import { listTeamStyles as styles } from "../styles";
-import { IconBack, IconDelete, IconSearch, IconTrash, BgEmpty } from "../../../assets/svg/ic_svg";
+import { IconBack, IconDelete, IconSearch, BgEmpty } from "../../../assets/svg/ic_svg";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import { scale } from '../../../utils/ScalingUtils';
-
-const RightActions = ({ progress, dragX, bgColor, handleOnPress }) => {
-  const scale = dragX.interpolate({
-    inputRange: [-100, 0],
-    outputRange: [1, 0],
-    extrapolate: 'clamp'
-  })
-  return (
-    <TouchableOpacity
-      style={styles.bgBtnDel(bgColor)}
-      onPress={() => handleOnPress()}
-      activeOpacity={0.7}
-    >
-      <Animated.View
-        style={[styles.rightAction, { transform: [{ scale }] }]}
-      >
-        <IconTrash />
-      </Animated.View>
-    </TouchableOpacity>
-  )
-}
+import { RightActions } from "../components";
 
 const ListTeam = ({ navigation, route }) => {
   const { params } = route || {}
@@ -34,24 +13,23 @@ const ListTeam = ({ navigation, route }) => {
   const [txtSearch, setTxtSearch] = useState('')
   const [dataConst, setDataConst] = useState(data)
   const [listTeam, setListTeam] = useState(dataConst)
-
-  const onChangeText = val => setTxtSearch(val)
-
-  useEffect(() => {
-    setListTeam(dataConst?.filter((i) =>
-      i?.name?.toLowerCase()?.includes(txtSearch?.toLowerCase())
-    ));
-  }, [txtSearch])
-
-  const addNew = (newTeam) => {
-    setDataConst([...dataConst, newTeam])
-    setListTeam([...listTeam, newTeam])
-  }
-
   let row = []
   let prevOpenedRow = null
 
-  const onDellete = (item, index) => {
+  const onChangeText = val => setTxtSearch(val)
+  const keyExtractor = (contact, index) => String(index)
+  const goBack = () => navigation.goBack()
+
+  useEffect(() => {
+    setListTeam(dataConst?.filter(e => e?.name?.toLowerCase()?.includes(txtSearch?.toLowerCase())));
+  }, [txtSearch])
+
+  const addNew = (newTeam) => {
+    setDataConst([newTeam, ...dataConst])
+    setListTeam([newTeam, ...listTeam])
+  }
+
+  const onDelete = (item, index) => () => {
     setDataConst(dataConst.filter(i => i.id !== item.id))
     setListTeam(listTeam.filter(i => i.id !== item.id))
     closeRow(index)
@@ -72,21 +50,15 @@ const ListTeam = ({ navigation, route }) => {
         onSwipeableWillOpen={() => closeRow(index)}
         renderRightActions={(progress, dragX) =>
           <RightActions
-            progress={progress}
+            index={index}
             dragX={dragX}
-            bgColor={index % 2 === 0 ? color.white : color.grey}
-            handleOnPress={() => onDellete(item)}
+            progress={progress}
+            handleOnPress={onDelete(item)}
           />
         }
       >
-        <TouchableOpacity
-          style={[styles.myTouchable, { backgroundColor: index % 2 === 0 ? color.grey : color.white }]}
-        >
-          <Image
-            source={{ uri: item?.logo }}
-            style={styles.img}
-            resizeMode='contain'
-          />
+        <TouchableOpacity style={styles.myTouchable(index)} >
+          <Image source={{ uri: item?.logo }} style={styles.img} resizeMode='contain' />
           <Text style={styles.txtName}>{item?.name?.toUpperCase()}</Text>
         </TouchableOpacity>
       </Swipeable>
@@ -125,36 +97,36 @@ const ListTeam = ({ navigation, route }) => {
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.myRow}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <IconBack />
-          </TouchableOpacity>
+          <TouchableOpacity onPress={goBack} style={styles.pading12}><IconBack /></TouchableOpacity>
           <View style={styles.txtInputView}>
             <TextInput
+              maxLength={30}
+              value={txtSearch}
+              placeholder={'Tìm kiếm'}
               style={styles.textInput}
               onChangeText={onChangeText}
-              placeholder={'Tìm kiếm'}
               placeholderTextColor={color.dark_grey}
-              value={txtSearch}
             />
             {
-              txtSearch === '' ? <IconSearch /> : (
-                <TouchableOpacity onPress={() => setTxtSearch('')}>
-                  <IconDelete />
-                </TouchableOpacity>
-              )
+              !txtSearch
+                ? <IconSearch />
+                : <TouchableOpacity style={styles.pading12} onPress={() => onChangeText('')}><IconDelete /></TouchableOpacity>
             }
           </View>
         </View>
       </View>
+      {/* CONTENT */}
       <View style={styles.flex1}>
+        {/* LIST CLUB */}
         <FlatList
           data={listTeam}
           renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(contact, index) => String(index)}
+          keyExtractor={keyExtractor}
           ListEmptyComponent={emptyComponent}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.containerStyles}
         />
+        {/* BOTTOM */}
         <View style={[styles.myRow, styles.viewBottom]}>
           <TouchableOpacity style={[styles.btnBottom, { borderWidth: 1 }]} onPress={onAddNew}>
             <Text style={[styles.txtBtn, { color: color.violet }]}>+ Thêm đội khác</Text>

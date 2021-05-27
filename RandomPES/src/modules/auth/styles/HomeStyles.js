@@ -39,15 +39,6 @@ const homeStyles = StyleSheet.create({
     paddingTop: verticalScale(18),
     paddingBottom: verticalScale(8)
   },
-  box: {
-    width: scale(22),
-    height: scale(22),
-    borderRadius: scale(2),
-    borderWidth: scale(2),
-    borderColor: color.dark_grey,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   btnImg: {
     height: verticalScale(114),
     width: scale(159),
@@ -69,16 +60,12 @@ const homeStyles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5
   },
-  iconTick: {
-    backgroundColor: color.white,
-    height: scale(25),
-    width: scale(25),
-    borderRadius: scale(13),
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 8,
-    right: 8,
+  btnSelect: {
+    padding: scale(10)
+  },
+  btnNext: {
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6)
   }
 })
 

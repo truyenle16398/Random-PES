@@ -13,11 +13,10 @@ import {
   AddNew,
   SplashScr
 } from "../modules";
-import { navigationRef } from '../constants/nav.constants';
 
 function Root() {
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer>
       <Stack.Navigator
         headerMode="none"
         screenOptions={{

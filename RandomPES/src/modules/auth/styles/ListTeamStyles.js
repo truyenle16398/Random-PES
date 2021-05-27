@@ -11,7 +11,8 @@ const listTeamStyles = StyleSheet.create({
   header: {
     backgroundColor: color.white,
     marginTop: getStatusBarHeight(true),
-    paddingHorizontal: scale(22),
+    paddingRight: scale(22),
+    paddingLeft: scale(10),
     paddingVertical: verticalScale(16),
     justifyContent: 'space-between',
     borderBottomWidth: 1,

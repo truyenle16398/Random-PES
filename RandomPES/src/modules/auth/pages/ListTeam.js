@@ -6,6 +6,7 @@ import { listTeamStyles as styles } from "../styles";
 import { IconBack, IconDelete, IconSearch, BgEmpty } from "../../../assets/svg/ic_svg";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { RightActions } from "../components";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const ListTeam = ({ navigation, route }) => {
   const { params } = route || {}
@@ -18,7 +19,7 @@ const ListTeam = ({ navigation, route }) => {
 
   const onChangeText = val => setTxtSearch(val)
   const keyExtractor = (contact, index) => String(index)
-  const goBack = () => navigation.goBack()
+  const onAddNew = () => navigation.navigate(Screen.ADD_NEW_SCREEN, { addNew })
 
   useEffect(() => {
     setListTeam(dataConst?.filter(e => e?.name?.toLowerCase()?.includes(txtSearch?.toLowerCase())));
@@ -30,9 +31,16 @@ const ListTeam = ({ navigation, route }) => {
   }
 
   const onDelete = (item, index) => () => {
-    setDataConst(dataConst.filter(i => i.id !== item.id))
-    setListTeam(listTeam.filter(i => i.id !== item.id))
+    setDataConst(dataConst.filter(e => e.id !== item.id))
+    setListTeam(listTeam.filter(e => e.id !== item.id))
     closeRow(index)
+  }
+
+  const goBack = () => {
+    const { type } = params || ''
+    type === 'OPEN_APP'
+      ? navigation.replace(Screen.HOME_SCREEN)
+      : navigation.goBack()
   }
 
   const closeRow = (index) => {
@@ -74,21 +82,20 @@ const ListTeam = ({ navigation, route }) => {
             <Image source={require('../../../assets/img/ball.png')} style={styles.imgBall} />
             <BgEmpty />
           </View>
-          {txtSearch !== '' && <Text style={styles.txtEmpty}>Không có kết quả cho "{txtSearch}"</Text>}
+          {txtSearch && <Text style={styles.txtEmpty}>Không có kết quả cho "{txtSearch}"</Text>}
         </View>
       </View>
     )
   }
 
-  const onAddNew = () => {
-    navigation.navigate(Screen.ADD_NEW_SCREEN, { addNew })
-  }
 
-  const goToRandom = () => {
-    if (dataConst && dataConst?.length > 1) {
-      navigation.navigate(Screen.WHEEL_SCREEN, { data: dataConst.sort(() => Math.random() - 0.5) })
-    } else {
+  const goToRandom = async () => {
+    if (dataConst?.length <= 1) {
       ToastAndroid.show('Chọn ít nhất 2 đội bóng', ToastAndroid.LONG)
+    } else {
+      let data = dataConst.sort(() => Math.random() - 0.5)
+      await AsyncStorage.setItem('DATA', JSON.stringify(data))
+      navigation.navigate(Screen.WHEEL_SCREEN, { data })
     }
   }
 

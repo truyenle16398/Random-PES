@@ -1,34 +1,25 @@
 import { View } from 'react-native';
 import React, { useEffect } from "react";
-import { Screen, DATA } from '../../../constants';
+import { Screen } from '../../../constants';
 import SplashScreen from 'react-native-splash-screen';
+import AsyncStorage from "@react-native-community/async-storage";
 
 const SplashScr = ({ navigation }) => {
 
     useEffect(() => {
-        checkLoggedUser();
+        checkRouter()
     }, []);
 
-    const checkLoggedUser = () => {
-      navigation.replace(Screen.HOME_SCREEN)
-        // getCurrentUser().then(user => {
-        //     if (user) {
-        //         setTimeout(async () => {
-        //             let tempUser = JSON.parse(user)
-        //             await dispath(actionSetUser({ tempUser }))
-        //             if (tempUser?.role === 'ARTIST' || tempUser?.role === 'FAN') {
-        //                 navigation.replace(Screen.HOME_STACK)
-        //             } else {
-        //                 navigation.replace(Screen.FAN_AND_FLOW)
-        //             }
-        //             SplashScreen.hide()
-        //         }, 1000);
-        //     } else {
-        //         setTimeout(() => {
-        //             navigation.replace(Screen.AUTH_STACK)
-        //         }, 1000)
-        //     }
-        // })
+    const checkRouter = () => {
+        AsyncStorage.getItem('DATA').then(val => {
+            let data = JSON.parse(val) || []
+            setTimeout(() => {
+                data?.length > 0
+                    ? navigation.replace(Screen.WHEEL_SCREEN, { data, type: 'OPEN_APP' })
+                    : navigation.replace(Screen.HOME_SCREEN)
+                SplashScreen.hide()
+            }, 1000);
+        })
     };
 
     return (<View />)

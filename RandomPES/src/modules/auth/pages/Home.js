@@ -13,19 +13,12 @@ import { color } from "../../../utils";
 import { Screen, DATA } from "../../../constants";
 import { IconHeader } from "../../../assets/svg/ic_svg";
 import { homeStyles as styles } from "../styles";
-import SplashScreen from 'react-native-splash-screen'
 import { IconCheck, SelectBox } from "../components";
 
 const Home = ({ navigation }) => {
   const [data, setData] = useState(DATA)
   const [allClub, setAllClub] = useState(false)
   const [allNational, setAllNational] = useState(false)
-
-  useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000);
-  }, [])
 
   useEffect(() => {
     let isAllClub = true, isAllNational = true

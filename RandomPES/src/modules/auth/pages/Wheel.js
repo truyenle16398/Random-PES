@@ -9,18 +9,17 @@ import {
   Image as RNImg,
   UIManager,
   LayoutAnimation,
-  FlatList,
-  ToastAndroid
+  FlatList
 } from 'react-native';
 import * as d3Shape from 'd3-shape';
 import color from 'randomcolor';
 import { color as appColor } from "../../../utils";
 import { snap } from '@popmotion/popcorn';
 import { Path, G, Svg, Image } from "react-native-svg";
-import { scale, verticalScale } from "../../../utils/ScalingUtils";
+import { scale } from "../../../utils/ScalingUtils";
 import { wheelStyles as styles } from "../styles";
 import { IconBack, IconSound, IconNoSound, IconHistory } from "../../../assets/svg/ic_svg";
-import { navigationRef } from "../../../constants/nav.constants";
+import { Screen } from "../../../constants";
 import Sound from "react-native-sound";
 const { width } = Dimensions.get('screen');
 
@@ -73,7 +72,15 @@ class Wheel extends React.Component {
     }
   })
 
-  goBack = () => navigationRef.current.goBack()
+  goBack = () => {
+    const { route, navigation } = this.props || {}
+    const { data } = this.state
+    const { params } = route || {}
+    const { type } = params || ''
+    type === 'OPEN_APP'
+      ? navigation.replace(Screen.LIST_TEAM_SCREEN, { data, type })
+      : navigation.goBack()
+  }
 
   componentDidMount() {
     if (Platform.OS === 'android') {
@@ -316,7 +323,7 @@ class Wheel extends React.Component {
     listHistory.length > 0 && this.setState({ isShowHistory: true })
   }
 
-  toggleSound = () => this.setState({ isSound: !isSound })
+  toggleSound = () => this.setState({ isSound: !this.state.isSound })
 
   render() {
     const { enabled, finished, isSound, isShowHistory } = this.state
@@ -343,7 +350,13 @@ class Wheel extends React.Component {
           <TouchableOpacity style={styles.btnWheel} onPress={this._onPan} disabled={!enabled}>
             {this._renderSvgWheel()}
           </TouchableOpacity>
-          {enabled && <RNText style={styles.txtHint}>Chạm vào vòng xoay để bắt đầu random!</RNText>}
+
+          {enabled && (
+            <TouchableOpacity onPress={this._onPan} disabled={!enabled}>
+              <RNImg source={require('../../../assets/img/touch.gif')} style={styles.gif} tintColor={appColor.dark_grey} />
+              <RNText style={styles.txtHint}>Chạm vào vòng xoay để bắt đầu random!</RNText>
+            </TouchableOpacity>
+          )}
         </View>
         {finished && enabled && this.renderWinner()}
         {isShowHistory && this.renderHistory()}

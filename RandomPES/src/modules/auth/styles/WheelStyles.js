@@ -113,9 +113,8 @@ const wheelStyles = StyleSheet.create({
   },
   txtHint: {
     fontSize: 18,
-    marginTop: verticalScale(12),
     fontWeight: 'bold',
-    color: 'silver'
+    color: color.dark_grey
   },
   btnBack: {
     flexDirection: 'row',
@@ -133,6 +132,11 @@ const wheelStyles = StyleSheet.create({
   }),
   knob: {
     alignItems: 'center'
+  },
+  gif: {
+    height: verticalScale(80),
+    width: verticalScale(80),
+    alignSelf: 'center'
   }
 });
 

@@ -5,8 +5,8 @@
 * TruyenLe: https://facebook.com/lhtruyen/
 
 ## Link to Download:
-<a href="https://i.diawi.com/QVY57D"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>
-<img src="https://www.diawi.com/qrcode/link/QVY57D" height=80px />
+<a href="https://i.diawi.com/zNJpXb"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=60px /></a>
+<img src="https://www.diawi.com/qrcode/link/zNJpXb" height=80px />
 
 ## Link Design:
 <a href="https://i.diawi.com/QVY57D"><img alt="Get it on Google Play" src="https://i.pinimg.com/originals/a5/58/b4/a558b426cb8973523f37bbed94cf0f09.png" height=60px /></a>
